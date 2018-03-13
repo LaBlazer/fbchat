@@ -979,9 +979,12 @@ class Client(object):
         :raises: FBchatException if request failed
         """
         thread_id, thread_type = self._getThread(thread_id, thread_type)
-        mimetype = guess_type(image_url)[0]
+        #mimetype = guess_type(image_url)[0]
+        req = requests.get(image_url, verify=False)
+        remote_image = req.content
+        mimetype = req.headers['content-type']
+        print(mimetype)
         is_gif = (mimetype == 'image/gif')
-        remote_image = requests.get(image_url).content
         image_id = self._uploadImage(image_url, remote_image, mimetype)
         return self.sendImage(image_id=image_id, message=message, thread_id=thread_id, thread_type=thread_type, is_gif=is_gif)
 
@@ -999,6 +1002,7 @@ class Client(object):
         """
         thread_id, thread_type = self._getThread(thread_id, thread_type)
         mimetype = guess_type(image_path)[0]
+        print(mimetype)
         is_gif = (mimetype == 'image/gif')
         image_id = self._uploadImage(image_path, open(image_path, 'rb'), mimetype)
         return self.sendImage(image_id=image_id, message=message, thread_id=thread_id, thread_type=thread_type, is_gif=is_gif)
